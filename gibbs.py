@@ -59,11 +59,16 @@ class MarkovNetwork(object):
 
     def cliques_containing_node(self, node):
         """
-        Returns all the cliques that contain given node X_i.
+        Returns all the cliques that contain given node X_i. If node is None
+        (no restriction) return all the cliques.
         """
-        return [c for c in self.cliques if node in c.nodes]
 
-    def probability(self, node, assignment):
+        if node is None:
+            return self.cliques
+        else:
+            return [c for c in self.cliques if node in c.nodes]
+
+    def probability(self, assignment, node=None):
         """
         Returns the probability of given assignment.
         """
@@ -138,7 +143,7 @@ class GibbsSampler(object):
             iteration += 1
 
             for variable in self.unobserved_vars:
-                probability = self.network.probability(variable, self.assignment)
+                probability = self.network.probability(self.assignment, variable)
                 sampled_value = True if random.random() <= probability else False
                 self.assignment[variable] = sampled_value
 
@@ -199,6 +204,8 @@ def main():
         # Slow down to peruse the output
         time.sleep(1)
         pprint.pprint(sample)
+
+    
 
 
 if __name__ == '__main__':
