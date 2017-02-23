@@ -59,14 +59,10 @@ class MarkovNetwork(object):
 
     def cliques_containing_node(self, node):
         """
-        Returns all the cliques that contain given node X_i. If node is None
-        (no restriction) return all the cliques.
+        Returns all the cliques that contain given node X_i.
         """
 
-        if node is None:
-            return self.cliques
-        else:
-            return [c for c in self.cliques if node in c.nodes]
+        return [c for c in self.cliques if node in c.nodes]
 
     def probability(self, assignment, node=None):
         """
