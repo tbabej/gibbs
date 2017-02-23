@@ -64,7 +64,7 @@ class MarkovNetwork(object):
 
         return [c for c in self.cliques if node in c.nodes]
 
-    def probability(self, assignment, node=None):
+    def probability(self, assignment, node):
         """
         Returns the probability of given assignment.
         """
