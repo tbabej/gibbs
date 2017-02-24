@@ -69,15 +69,16 @@ class MarkovNetwork(object):
         Returns the probability of given assignment.
         """
 
-        product = lambda l: reduce(operator.mul, l, 1)
-
-        nominator = product([c.factor(**assignment)
-                             for c in self.cliques_containing_node(node)])
-        denominator = 0
-        
         # We need a new assignment dict so that we don't modify what we were
         # given
         assignment_temp = assignment.copy()
+        assignment_temp[node] = True
+
+        product = lambda l: reduce(operator.mul, l, 1)
+
+        nominator = product([c.factor(**assignment_temp)
+                             for c in self.cliques_containing_node(node)])
+        denominator = 0
 
         for node_assignment in (True, False):
             assignment_temp[node] = node_assignment
