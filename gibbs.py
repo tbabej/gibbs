@@ -64,9 +64,10 @@ class MarkovNetwork(object):
 
         return [c for c in self.cliques if node in c.nodes]
 
-    def probability(self, assignment, node):
+    def node_probability(self, assignment, node):
         """
-        Returns the probability of given assignment.
+        Returns the probability of random variable 'node' being True given
+        assignment of the rest of the random variables in the network.
         """
 
         # We need a new assignment dict so that we don't modify what we were
@@ -140,7 +141,8 @@ class GibbsSampler(object):
             iteration += 1
 
             for variable in self.unobserved_vars:
-                probability = self.network.probability(self.assignment, variable)
+                probability = self.network.node_probability(self.assignment,
+                                                            variable)
                 sampled_value = True if random.random() <= probability else False
                 self.assignment[variable] = sampled_value
 
