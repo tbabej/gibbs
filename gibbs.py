@@ -151,6 +151,14 @@ class GibbsSampler(object):
             if iteration >= 1000 and iteration % 100 == 0:
                 yield self.assignment.copy()
 
+    def generate(self, num_samples):
+        """
+        Returns a list of samples.
+        """
+
+        return list(islice(self, num_samples))
+
+
 def main():
     # See illustration on slide 17
     cliques = [
