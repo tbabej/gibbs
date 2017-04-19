@@ -149,7 +149,7 @@ class GibbsSampler(object):
             # Skip first 1000 iterations for burn-in, return every 100th iteration
             # since subsequent samples are correlated
             if iteration >= 1000 and iteration % 100 == 0:
-                yield self.assignment
+                yield self.assignment.copy()
 
 def main():
     # See illustration on slide 17
