@@ -98,6 +98,9 @@ class GibbsSampler(object):
     Takes:
       - network: An instance of MarkovNetwork
       - evidence: A dictionary containing observed data
+      - burnin: A number of steps to throw away at the start of the sampling
+                before returning the results.
+      - step: Only every step-th sample will be returned.
 
     Example:
     >>> network = MarkovNetwork([
@@ -113,9 +116,11 @@ class GibbsSampler(object):
     >>> g = GibbsSampler(network, evidence)
     """
 
-    def __init__(self, network, evidence):
+    def __init__(self, network, evidence, burnin=1000, step=100):
         self.network = network
         self.evidence = evidence
+        self.burnin = burnin
+        self.step = step
 
         # Choose uniform assigmnemt for all variables and override
         # with observed data
@@ -148,7 +153,7 @@ class GibbsSampler(object):
 
             # Skip first 1000 iterations for burn-in, return every 100th iteration
             # since subsequent samples are correlated
-            if iteration >= 1000 and iteration % 100 == 0:
+            if iteration >= self.burnin and iteration % self.step == 0:
                 yield self.assignment.copy()
 
     def generate(self, num_samples):
