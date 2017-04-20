@@ -44,7 +44,7 @@ class Clique(object):
 
         key = tuple(kwargs[node] for node in self.nodes)
         return self.potential[key]
-     
+
 
 class MarkovNetwork(object):
 
@@ -87,7 +87,7 @@ class MarkovNetwork(object):
                                     for c in self.cliques_containing_node(node)])
 
         return float(nominator)/denominator
-    
+
 
 class GibbsSampler(object):
 
@@ -216,8 +216,6 @@ def main():
         # Slow down to peruse the output
         time.sleep(1)
         pprint.pprint(sample)
-
-    
 
 
 if __name__ == '__main__':
