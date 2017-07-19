@@ -2,8 +2,6 @@
 import itertools
 import random
 
-from markov import Clique, MarkovNetwork
-
 
 class GibbsSampler(object):
 
