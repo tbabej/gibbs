@@ -7,9 +7,13 @@ import random
 from markov import Clique, MarkovNetwork
 
 
-class IsingModel(object):
+class IsingModel(MarkovNetwork):
 
     def __init__(self, rows, columns):
+        """
+        Generates cliques present in the Ising model and then delegates to
+        parent MarkovNetwork class.
+        """
 
         # First, generate a list of K1 cliques
         cliques = [
@@ -35,6 +39,8 @@ class IsingModel(object):
                         [self.node_id(i, j), self.node_id(i, j + 1)],
                         self.random_k2_factor()
                     ))
+
+        super(IsingModel, self).__init__(cliques)
 
     @staticmethod
     def node_id(row, column):
