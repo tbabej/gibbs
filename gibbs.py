@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-import pprint
+import itertools
 import random
-import time
 
 from markov import Clique, MarkovNetwork
 
@@ -78,4 +77,4 @@ class GibbsSampler(object):
         Returns a list of samples.
         """
 
-        return list(islice(self, num_samples))
+        return list(itertools.islice(self, num_samples))

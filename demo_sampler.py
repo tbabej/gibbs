@@ -2,6 +2,13 @@
 Shows capabilities of the Gibbs sampler.
 """
 
+import pprint
+import time
+
+from markov import Clique, MarkovNetwork
+from gibbs import GibbsSampler
+
+
 def main():
     # See illustration on slide 17
     cliques = [
