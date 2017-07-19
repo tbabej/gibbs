@@ -77,6 +77,11 @@ class MarkovNetwork(object):
 
         product = lambda l: reduce(operator.mul, l, 1)
 
+        # It is a mere performance improvement to multiply only the factors
+        # that contain the node being considered, since factors not containing
+        # the node being considered get the same input here and in all the
+        # terms of the partition function, hence canceling out
+
         nominator = product([c.factor(**assignment_temp)
                              for c in self.cliques_containing_node(node)])
         denominator = 0
