@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import operator
-import random
-
-import time
 import pprint
+import random
+import time
+
+from functools import reduce
 
 
 class Clique(object):
