@@ -3,7 +3,10 @@ This module implements functionality related to Markov Networks.
 """
 
 import operator
+from collections import Counter
 from functools import reduce
+
+import gibbs
 
 
 class Clique(object):
@@ -93,4 +96,8 @@ class MarkovNetwork(object):
 
         return float(nominator)/denominator
 
-
+    def map_query(self, evidence, n_samples=1000):
+        sampler = gibbs.GibbsSampler(self, evidence)
+        samples = sampler.generate(n_samples)
+        samples_tuples = [tuple(sorted(d.items())) for d in samples]
+        return Counter(samples_tuples).most_common()
