@@ -29,7 +29,6 @@ class IsingModel(LoggerMixin):
 
         # Store values of clamped nodes
         self.clamped = {}
-
         # Store the energy offset due to clamped qubits so that we correctly
         # compute resulting energy
         self.energy_offset = 0
