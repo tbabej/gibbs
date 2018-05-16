@@ -1,78 +1,83 @@
 #!/usr/bin/python3
 import itertools
+import math
 import random
 
+from data import IsingSample, SamplePool
+from sampler import IsingSampler
 
-class GibbsSampler(object):
+
+class GibbsSampler(IsingSampler):
 
     """
     A class that performs sampling from multinomial joint distribution given
     all the conditional probability distributions.
 
     Takes:
-      - network: An instance of MarkovNetwork
-      - evidence: A dictionary containing observed data
       - burnin: A number of steps to throw away at the start of the sampling
                 before returning the results.
       - step: Only every step-th sample will be returned.
-
-    Example:
-    >>> network = MarkovNetwork([
-        Clique(['P1', 'P2'], {
-               (True, True): 1,
-               (True, False): 0.5,
-               (False, True): 0.5,
-               (False, False): 2,
-        }),
-        ...
-    ])
-    >>> evidence = {'P1': True}
-    >>> g = GibbsSampler(network, evidence)
     """
 
-    def __init__(self, network, evidence, burnin=1000, step=100):
-        self.network = network
-        self.evidence = evidence
+    def __init__(self, burnin=1000, step=100, temperature=0.15):
         self.burnin = burnin
         self.step = step
+        self.temperature = temperature
 
-        # Choose uniform assigmnemt for all variables and override
-        # with observed data
-        self.assignment = {
-            key: True if random.random() < 0.5 else False
-            for key in self.network.nodes
-        }
-        self.assignment.update(evidence)
+    def node_probability(self, model, assignment, variable, value=-1):
+        """
+        Computes the probability of the variable obtaining the value given the
+        rest of the assignment.
+        """
 
-        # During Gibbs sampling, we only update unobserved variables
-        self.unobserved_vars = set(self.network.nodes) - set(evidence.keys())
+        possible_samples = []
+        for v in (-1, 1):
+            z_assignment = assignment.copy()
+            z_assignment[variable] = v
+            possible_samples.append(IsingSample(model, z_assignment))
 
-    def __iter__(self):
+        i_assignment = assignment.copy()
+        i_assignment[variable] = value
+        i_sample = IsingSample(model, i_assignment)
+
+        nominator = math.exp(-1 * i_sample.energy / self.temperature)
+        denominator = sum([
+            math.exp(-1 * sample.energy / self.temperature)
+            for sample in possible_samples
+        ])
+
+        return nominator / denominator
+
+    def sample(self, model, num_samples):
         """
         Updates each variable using its connditional probability distribution,
         and yields the result.
         """
 
-        # Gibbs sampling runs indefinitely
+        # Keep track of the iteration number for thinning and burn-in
         iteration = 0
 
-        while True:
+        # Collect samples
+        pool = SamplePool()
+
+        # Create initial assignment
+        assignment = {
+            key: -1 if random.random() < 0.5 else 1
+            for key in model.variables
+        }
+
+        while len(pool) < num_samples:
             iteration += 1
 
-            for variable in self.unobserved_vars:
-                probability = self.network.node_probability(self.assignment,
-                                                            variable)
-                sampled_value = True if random.random() <= probability else False
-                self.assignment[variable] = sampled_value
+            for variable in model.variables:
+                probability = self.node_probability(model, assignment, variable)
+                sampled_value = -1 if random.random() <= probability else 1
+                assignment[variable] = sampled_value
 
             # Skip first 1000 iterations for burn-in, return every 100th iteration
             # since subsequent samples are correlated
             if iteration >= self.burnin and iteration % self.step == 0:
-                yield self.assignment.copy()
+                sample = IsingSample(model, assignment.copy())
+                pool.add(sample)
 
-    def generate(self, num_samples):
-        """
-        Returns a list of samples.
-        """
-
-        return list(itertools.islice(self, num_samples))
+        return pool
