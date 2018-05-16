@@ -76,7 +76,7 @@ class TestGibbsSampler(object):
         Test that biased checkerboard (at one qubit) returns only one solution.
         """
 
-        sampler = DWaveSampler()
+        sampler = GibbsSampler()
         biased_checkerboard = IsingModel(J={(0, 1): 1, (1, 2): 1, (2, 3): 1, (3, 0): 1}, h={0: 2})
         result = sampler.sample(biased_checkerboard, 10000)
 
