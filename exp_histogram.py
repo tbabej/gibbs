@@ -8,16 +8,8 @@ from bruteforce import BruteforceSampler
 
 
 def sample_and_histogram(sampler, model, temperature):
-    # First D-wave
     results = sampler.sample(model, 1000, temperature)
-    histogram = results.to_energy_histogram()
-
-    # Seaborn expects non-histogramed data for visualization
-    print(sum(histogram.values()))
-    raw_data = sum([[key] * value for key, value in histogram.items()], [])
-    print(len(raw_data))
-
-    seaborn.distplot(raw_data, rug=False, kde=False, bins=30)
+    seaborn.distplot(results.raw_data, rug=False, kde=False, bins=30)
     plt.show()
 
 
