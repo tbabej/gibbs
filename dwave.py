@@ -80,7 +80,7 @@ class DWaveSampler(IsingSampler):
 
         return best_embedding
 
-    def query_dwave(self, h, J, embedding, samples, temperature):
+    def query_dwave(self, h, J, embedding, samples, temperature, batch_size):
         """
         Queries D-Wave multiple times for solution of the given Ising model,
         aggregating the unembedded results.
@@ -93,7 +93,7 @@ class DWaveSampler(IsingSampler):
             'timing': []
         }
 
-        num_batches = samples // 10000
+        num_batches = samples // batch_size
 
         for i in range(num_batches):
             batch_solved = False
@@ -104,8 +104,8 @@ class DWaveSampler(IsingSampler):
                         self.solver, h, J,
                         answer_mode='histogram',
                         auto_scale=True,
-                        num_reads=10000,
-                        num_spin_reversal_transforms=100,
+                        num_reads=batch_size,
+                        num_spin_reversal_transforms=5,
                         beta=temperature,
                         postprocess='sampling',
                         chains=embedding
@@ -144,7 +144,9 @@ class DWaveSampler(IsingSampler):
         aggregated_list = [(key, value['count'])for key, value in aggregated.items()]
         return list(sorted(aggregated_list, key=lambda x: x[1]))
 
-    def sample(self, model, num_samples, temperature=1, embedding=None):
+    def sample(self, model, num_samples, temperature=1, batch_size=None, embedding=None):
+        # Determine the batch size
+        batch_size = batch_size or min(10000, num_samples)
         # Extract the model and get h and J formatted for D-Wave API
         h_dwave, J_dwave = model.as_dwave()
 
@@ -174,7 +176,14 @@ class DWaveSampler(IsingSampler):
         # Update J matrix
         J_embedded.update({key: -1.0 * max_coefficient for key in J_couplings.keys()})
 
-        results = self.query_dwave(h_embedded, J_embedded, final_embedding, num_samples)
+        results = self.query_dwave(
+            h_embedded,
+            J_embedded,
+            final_embedding,
+            num_samples,
+            temperature,
+            batch_size
+        )
 
         samples = [
             IsingSample(model, assignment, occurences)
