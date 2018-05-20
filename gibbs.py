@@ -3,6 +3,8 @@ import itertools
 import math
 import random
 
+import tqdm
+
 from data import IsingSample, SamplePool
 from sampler import IsingSampler
 
@@ -19,12 +21,11 @@ class GibbsSampler(IsingSampler):
       - step: Only every step-th sample will be returned.
     """
 
-    def __init__(self, burnin=1000, step=100, temperature=0.15):
+    def __init__(self, burnin=200, step=10):
         self.burnin = burnin
         self.step = step
-        self.temperature = temperature
 
-    def node_probability(self, model, assignment, variable, value=-1):
+    def node_probability(self, model, assignment, variable, temperature, value=-1):
         """
         Computes the probability of the variable obtaining the value given the
         rest of the assignment.
@@ -40,15 +41,15 @@ class GibbsSampler(IsingSampler):
         i_assignment[variable] = value
         i_sample = IsingSample(model, i_assignment)
 
-        nominator = math.exp(-1 * i_sample.energy / self.temperature)
+        nominator = math.exp(-1 * i_sample.energy / temperature)
         denominator = sum([
-            math.exp(-1 * sample.energy / self.temperature)
+            math.exp(-1 * sample.energy / temperature)
             for sample in possible_samples
         ])
 
         return nominator / denominator
 
-    def sample(self, model, num_samples):
+    def sample(self, model, num_samples, temperature=1):
         """
         Updates each variable using its connditional probability distribution,
         and yields the result.
@@ -66,11 +67,12 @@ class GibbsSampler(IsingSampler):
             for key in model.variables
         }
 
+        progress = tqdm.tqdm(total=self.burnin + num_samples * self.step)
         while len(pool) < num_samples:
             iteration += 1
 
             for variable in model.variables:
-                probability = self.node_probability(model, assignment, variable)
+                probability = self.node_probability(model, assignment, variable, temperature)
                 sampled_value = -1 if random.random() <= probability else 1
                 assignment[variable] = sampled_value
 
@@ -79,5 +81,7 @@ class GibbsSampler(IsingSampler):
             if iteration >= self.burnin and iteration % self.step == 0:
                 sample = IsingSample(model, assignment.copy())
                 pool.add(sample)
+
+            progress.update(1)
 
         return pool
