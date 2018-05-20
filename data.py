@@ -3,6 +3,7 @@ import heapq
 import json
 import operator
 
+from collections import defaultdict
 from util import symmetriczerodefaultdict, zerodefaultdict, hashabledict
 from logger import LoggerMixin
 
@@ -407,7 +408,7 @@ class SamplePool(object):
         # add the occurences
         if sample.as_tuple in self.dict:
             present = self.dict[sample.as_tuple]
-            present.occurences += sample.occurences
+            present.occurences += int(sample.occurences)
             return
 
         heapq.heappush(self.heap, sample)
@@ -425,7 +426,7 @@ class SamplePool(object):
         Bins the samples according to their energy.
         """
 
-        histogram = zerodefaultdict()
+        histogram = defaultdict(int)
         for sample in self.heap:
             histogram[sample.energy] += sample.occurences
 
