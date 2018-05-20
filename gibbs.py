@@ -21,9 +21,9 @@ class GibbsSampler(IsingSampler):
       - step: Only every step-th sample will be returned.
     """
 
-    def __init__(self, burnin=200, step=10):
-        self.burnin = burnin
-        self.step = step
+    def __init__(self, burnin=None, step=None, n_variables=None):
+        self.burnin = burnin or int(0.7 * n_variables ** 2)
+        self.step = step or int(0.1 * n_variables) + 3
 
     def node_probability(self, model, assignment, variable, temperature, value=-1):
         """
