@@ -2,6 +2,7 @@ import functools
 import heapq
 import json
 import operator
+import numpy
 
 from collections import defaultdict
 from util import symmetriczerodefaultdict, zerodefaultdict, hashabledict
@@ -431,3 +432,37 @@ class SamplePool(object):
             histogram[sample.energy] += sample.occurences
 
         return histogram
+
+    @property
+    def raw_data(self):
+        """
+        Return the raw sample list.
+        """
+
+        return sum([
+            [sample.energy] * sample.occurences
+            for sample in self.heap
+        ], [])
+
+    @property
+    def mean_energy(self):
+        """
+        Return the mean energy in the pool.
+        """
+
+        return numpy.average(self.raw_data)
+
+    def KL_divergence(self, partition_function, temperature):
+        """
+        Return the KL divergence to the idealized Boltzmann distribution.
+        """
+
+        num_samples = len(self)
+
+        boltz_prob = lambda sample: (math.e ** (-sample.energy/temperature)) / partition_function
+        data_prob = lambda sample: sample.occurences / float(num_samples)
+
+        return sum([
+            data_prob(sample) * math.log(data_prob(sample) / boltz_prob(sample))
+            for sample in self.heap
+        ])
