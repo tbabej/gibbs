@@ -104,14 +104,14 @@ class RandomBuilder(GridBuilder):
     biases and couplings.
     """
 
-    def generate(self):
+    def generate(self, decimals):
         J = {}
         h = {}
 
         for (node1, node2) in self.graph.edges:
-            J[self.variable(*node1), self.variable(*node2)] = 2 * random.random() - 1
+            J[self.variable(*node1), self.variable(*node2)] = round(2 * random.random() - 1, decimals)
         for node in self.graph.nodes:
-            h[self.variable(*node)] = 2 * random.random() - 1
+            h[self.variable(*node)] = round(2 * random.random() - 1, decimals)
 
         return IsingModel(J, h)
 

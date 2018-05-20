@@ -419,3 +419,14 @@ class SamplePool(object):
         """
 
         return heapq.nlargest(number, self.heap)
+
+    def to_energy_histogram(self):
+        """
+        Bins the samples according to their energy.
+        """
+
+        histogram = zerodefaultdict()
+        for sample in self.heap:
+            histogram[sample.energy] += sample.occurences
+
+        return histogram
