@@ -387,18 +387,10 @@ class SamplePool(object):
 
     def __getitem__(self, key):
         """
-        Returns the slices of the pool, sorted.
+        Returns the slices of the pool.
         """
 
-        if isinstance(key, int):
-            size = key + 1
-        elif isinstance(key, slice):
-            size = max([k for k in (key.start, key.stop) if k is not None]) + 1
-        else:
-            raise ValueError("Invalid key type '{}', must be either int"
-                             " or slice.".format(type(key)))
-
-        return self.n_best(size)[key]
+        return self.heap[key]
 
     def add(self, sample):
         """
