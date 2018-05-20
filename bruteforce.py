@@ -46,7 +46,7 @@ class BruteforceSampler(IsingSampler):
 
         return pool
 
-    def partition_function(model):
+    def partition_function(self, model):
         """
         Computes the partition function of the given mode.
         """
