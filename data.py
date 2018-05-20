@@ -458,3 +458,18 @@ class SamplePool(object):
             data_prob(sample) * math.log(data_prob(sample) / boltz_prob(sample))
             for sample in self.heap
         ])
+
+    def reverse_KL_divergence(self, partition_function, temperature):
+        """
+        Return the KL divergence to the idealized Boltzmann distribution.
+        """
+
+        num_samples = len(self)
+
+        boltz_prob = lambda sample: (math.e ** (-sample.energy/temperature)) / partition_function
+        data_prob = lambda sample: sample.occurences / float(num_samples)
+
+        return sum([
+            boltz_prob(sample) * math.log(boltz_prob(sample) / data_prob(sample))
+            for sample in self.heap
+        ])
