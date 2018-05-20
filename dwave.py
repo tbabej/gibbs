@@ -142,12 +142,14 @@ class DWaveSampler(IsingSampler):
         aggregated_list = [(key, value['count'])for key, value in aggregated.items()]
         return list(sorted(aggregated_list, key=lambda x: x[1]))
 
-    def sample(self, model, num_samples):
+    def sample(self, model, num_samples, embedding=None):
         # Extract the model and get h and J formatted for D-Wave API
         h_dwave, J_dwave = model.as_dwave()
 
         # Find the embedding
-        embedding = self.find_best_embedding(J_dwave).data
+        if embedding is None:
+            embedding = self.find_best_embedding(J_dwave).data
+            self.info(embedding)
 
         # Transform J and h using found graph embedding
         # embed_model can still do some changes to the embedding
