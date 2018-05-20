@@ -1,4 +1,18 @@
 from collections import defaultdict
+from itertools import islice
+
+
+def split_iterator(n, iterable):
+    """
+    Splits the iterator into multiple iterators of size n.
+    """
+
+    iterator = iter(iterable)
+    chunk = list(islice(iterator, n))
+
+    while chunk:
+        yield chunk
+        chunk = list(islice(iterator, n))
 
 class hashabledict(dict):
     """
