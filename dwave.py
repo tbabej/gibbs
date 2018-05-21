@@ -106,7 +106,7 @@ class DWaveSampler(IsingSampler):
                         auto_scale=True,
                         num_reads=batch_size,
                         num_spin_reversal_transforms=5,
-                        beta=temperature,
+                        beta=1.0/float(temperature),
                         postprocess='sampling',
                         chains=embedding
                     )

@@ -103,18 +103,32 @@ class GridBuilder(logger.LoggerMixin):
                 right = self.variable(2*block_x + 1, block_y)
 
                 block_hardware_offset = 8 * 16 * block_y + 8 * block_x
-                embedding_map[left] = [
-                    block_hardware_offset,
-                    block_hardware_offset + 3,
-                    block_hardware_offset + 4,
-                    block_hardware_offset + 7,
-                ]
-                embedding_map[right] = [
-                    block_hardware_offset + 1,
-                    block_hardware_offset + 2,
-                    block_hardware_offset + 5,
-                    block_hardware_offset + 6,
-                ]
+                if block_x % 2 == 0:
+                    embedding_map[left] = [
+                        block_hardware_offset,
+                        block_hardware_offset + 3,
+                        block_hardware_offset + 4,
+                        block_hardware_offset + 7,
+                    ]
+                    embedding_map[right] = [
+                        block_hardware_offset + 1,
+                        block_hardware_offset + 2,
+                        block_hardware_offset + 5,
+                        block_hardware_offset + 6,
+                    ]
+                else:
+                    embedding_map[right] = [
+                        block_hardware_offset,
+                        block_hardware_offset + 3,
+                        block_hardware_offset + 4,
+                        block_hardware_offset + 7,
+                    ]
+                    embedding_map[left] = [
+                        block_hardware_offset + 1,
+                        block_hardware_offset + 2,
+                        block_hardware_offset + 5,
+                        block_hardware_offset + 6,
+                    ]
 
         return [value for key, value in sorted(embedding_map.items())]
 
