@@ -1,5 +1,7 @@
 from collections import defaultdict
 from itertools import islice
+import json
+import datetime
 
 
 def split_iterator(n, iterable):
@@ -92,3 +94,8 @@ class symmetriczerodefaultdict(zerodefaultdict):
         used_cols = set([index[1] for index in self])
 
         return used_rows | used_cols
+
+def save_experiment(name, data):
+    filename = "{}_{}.json".format(name, datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
+    with open("data/{}".format(filename), 'w') as f:
+        f.write(json.dumps(data))

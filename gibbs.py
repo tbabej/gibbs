@@ -41,9 +41,9 @@ class GibbsSampler(IsingSampler):
         i_assignment[variable] = value
         i_sample = IsingSample(model, i_assignment)
 
-        nominator = math.exp(-1 * i_sample.energy / temperature)
+        nominator = math.exp(-1 * i_sample.energy / float(temperature))
         denominator = sum([
-            math.exp(-1 * sample.energy / temperature)
+            math.exp(-1 * sample.energy / float(temperature))
             for sample in possible_samples
         ])
 

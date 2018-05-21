@@ -1,4 +1,5 @@
 import itertools
+import math
 
 from joblib import Parallel, delayed
 
@@ -46,9 +47,9 @@ class BruteforceSampler(IsingSampler):
 
         return pool
 
-    def partition_function(self, model):
+    def partition_function(self, model, temperature):
         """
         Computes the partition function of the given mode.
         """
 
-        return sum([sample.energy for sample in self.sample(model)])
+        return sum([math.e ** (-sample.energy/float(temperature)) for sample in self.sample(model)])
