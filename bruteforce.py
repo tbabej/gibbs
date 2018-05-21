@@ -36,14 +36,13 @@ class BruteforceSampler(IsingSampler):
 
         with Parallel(n_jobs=-1, verbose=10) as parallel:
             all_assignments = self.generate_assignments(model)
-            for chunk_assignments in split_iterator(100000, all_assignments):
-                chunk_solutions = parallel(
-                    delayed(IsingSample)(model, assignment)
-                    for assignment in chunk_assignments
-                )
+            solutions = parallel(
+                delayed(IsingSample)(model, assignment)
+                for assignment in all_assignments
+            )
 
-                for solution in chunk_solutions:
-                    pool.add(solution)
+            for solution in solutions:
+                pool.add(solution)
 
         return pool
 
