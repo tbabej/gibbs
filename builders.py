@@ -57,10 +57,31 @@ class GridBuilder(logger.LoggerMixin):
                 lower_right = self.variable(2*block_x + 1, 2*block_y + 1)
 
                 block_hardware_offset = 8 * 16 * block_y + 8 * block_x
-                embedding_map[upper_left] = [block_hardware_offset, block_hardware_offset + 4]
-                embedding_map[upper_right] = [block_hardware_offset + 1, block_hardware_offset + 5]
-                embedding_map[lower_right] = [block_hardware_offset + 2, block_hardware_offset + 6]
-                embedding_map[lower_left] = [block_hardware_offset + 3, block_hardware_offset + 7]
+                block_is_even = ((block_x + block_y) % 2 == 0)
+
+                if block_y % 2 == 0:
+                    if block_x % 2 == 0:
+                        embedding_map[upper_left]  = [block_hardware_offset, block_hardware_offset + 4]
+                        embedding_map[upper_right] = [block_hardware_offset + 1, block_hardware_offset + 5]
+                        embedding_map[lower_left]  = [block_hardware_offset + 2, block_hardware_offset + 6]
+                        embedding_map[lower_right] = [block_hardware_offset + 3, block_hardware_offset + 7]
+                    else:
+                        embedding_map[upper_left]  = [block_hardware_offset + 1, block_hardware_offset + 5]
+                        embedding_map[upper_right] = [block_hardware_offset, block_hardware_offset + 4]
+                        embedding_map[lower_left]  = [block_hardware_offset + 3, block_hardware_offset + 7]
+                        embedding_map[lower_right] = [block_hardware_offset + 2, block_hardware_offset + 6]
+                else:
+                    if block_x % 2 == 0:
+                        embedding_map[upper_left]  = [block_hardware_offset + 2, block_hardware_offset + 6]
+                        embedding_map[upper_right] = [block_hardware_offset + 3, block_hardware_offset + 7]
+                        embedding_map[lower_left]  = [block_hardware_offset, block_hardware_offset + 4]
+                        embedding_map[lower_right] = [block_hardware_offset + 1, block_hardware_offset + 5]
+                    else:
+                        embedding_map[upper_left]  = [block_hardware_offset + 3, block_hardware_offset + 7]
+                        embedding_map[upper_right] = [block_hardware_offset + 2, block_hardware_offset + 6]
+                        embedding_map[lower_left]  = [block_hardware_offset + 1, block_hardware_offset + 5]
+                        embedding_map[lower_right] = [block_hardware_offset, block_hardware_offset + 4]
+
 
         return [value for key, value in sorted(embedding_map.items())]
 
