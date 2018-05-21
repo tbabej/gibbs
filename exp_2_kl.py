@@ -61,11 +61,12 @@ def main():
             res += [{'type': 'dwave2','width': model_width, 'height': model_height, 'kl': kl} for kl in kl_dwave_two]
             res += [{'type': 'dwave4','width': model_width, 'height': model_height, 'kl': kl} for kl in kl_dwave_four]
 
-    save_experiment("kl", {
-        'result': res,
-    })
-    df = pandas.DataFrame.from_dict(res)
-    df.to_csv("data_kl_{}.json".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
+            df = pandas.DataFrame.from_dict(res)
+            df.to_csv("data_kl_{}.csv".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
+            df.to_json("data_kl_{}.json".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
+            save_experiment("kl", {
+                'result': res,
+            })
 
 
 if __name__ == '__main__':

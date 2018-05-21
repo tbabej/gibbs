@@ -53,11 +53,12 @@ def main():
             res += [{'type': 'dwave2','width': model_width, 'height': model_height, 'mean': mean} for mean in mean_dwave_two]
             res += [{'type': 'dwave4','width': model_width, 'height': model_height, 'mean': mean} for mean in mean_dwave_four]
 
-    save_experiment("mean", {
-        'result': res,
-    })
-    df = pandas.DataFrame.from_dict(res)
-    df.to_csv("data_mean_{}.json".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
+            save_experiment("mean", {
+                'result': res,
+            })
+            df = pandas.DataFrame.from_dict(res)
+            df.to_csv("data_mean_{}.csv".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
+            df.to_json("data_mean_{}.json".format(datetime.datetime.now().strftime("%Y%m%d_%H%M%S")))
 
 
 if __name__ == '__main__':
